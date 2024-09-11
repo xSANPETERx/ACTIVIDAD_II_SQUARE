@@ -1,0 +1,84 @@
+0001   0000             ;HECHO POR ROBERTO SAN PEDRO
+0002   0000             ;PROGRAMA QUE CALCULA LA RAIZ CUADRADA DE UN NUMERO ENTRE 0 Y 99
+0003   0000             
+0004   0000             ;PROGRAMA PRINCIPAL
+0005   0000             	.org 0000h
+0006   0000 06 1D       	LD B,29  ;numero que se le sacara raiz
+0007   0002 0E 00       	LD C,0  ;registro del resultado
+0008   0004 78          	LD A,B  ;se carga el numero en registro A para todas las operaciones
+0009   0005             
+0010   0005             	;-----------------------------
+0011   0005             	;CASOS PREDETERMINADOS
+0012   0005             	;-----------------------------
+0013   0005             
+0014   0005 FE 00       	CP 0
+0015   0007 CA 2A 00    	JP Z, FIN1
+0016   000A FE 01       	CP 1
+0017   000C CA 2A 00    	JP Z, FIN1
+0018   000F             
+0019   000F             	;--------------
+0020   000F             	;CICLO WHILE
+0021   000F             	;--------------
+0022   000F             
+0023   000F 16 01       	LD D,1 ;VARIABLE RESULT
+0024   0011 1E 01       	LD E,1 ;VARIABLE i
+0025   0013             WHILE:
+0026   0013 78          	LD A,B
+0027   0014 BA          	CP D
+0028   0015 DA 2E 00    	JP C, FIN2 ;AL HACER LA COMPARACION Y A SEA MENOR SE ACTIVA CARRY DANDO FIN
+0029   0018 1C          	INC E
+0030   0019             	;DECLARAMOS LOS REGISTROS PARA OPERACIONES DE MULTIPLICACION
+0031   0019 26 00       	LD H,0
+0032   001B 2E 00       	LD L,0
+0033   001D             MULT:
+0034   001D 7D          	LD A,L ;A SERA EL ACUMULADOR DE LA MULTIPLICACION (SUMA)
+0035   001E 83          	ADD A,E
+0036   001F 6F          	LD L,A ;SE GUARDA VALOR ACUMULADO PARA UTILIZAR REGISTRO A
+0037   0020 24          	INC H ;SE INCREMENTA EL CONTADOR
+0038   0021 7B          	LD A,E ;SE CARGA EL NUMERO DE VECES A MULTIPLICAR PARA COMPARAR
+0039   0022 BC          	CP H
+0040   0023 C2 1D 00    	JP NZ, MULT ;MIENTRAS EL CONTADOR NO SEA IGUAL AL NUMERO DE VECES A MULTIPLICAR (REGISTRO E) SEGUIRA SUMANDO
+0041   0026 55          	LD D,L ;SE CARGA EL RESULTADO DE LA MULTIPLICACION PARA LA COMPARACION EN EL WHILE
+0042   0027 C3 13 00    	JP WHILE
+0043   002A             
+0044   002A             FIN1:
+0045   002A 4F          	LD C,A ;LA RAIZ DE 0 Y 1 ES EL MISMO NUMERO
+0046   002B C3 33 00    	JP BCD_NUM
+0047   002E             
+0048   002E             FIN2:
+0049   002E 1D          	DEC E ;EL CONTADOR ESTÁ UNA UNIDAD POR ARRIBA DEL RESULTADO POR LO QUE SE DECREMENTA
+0050   002F 4B          	LD C,E
+0051   0030 C3 33 00    	JP BCD_NUM
+0052   0033             
+0053   0033             	;---------------------
+0054   0033             	;CONVERTIR EL VALOR DE B EN NUMERO BCD DECIMAL
+0055   0033             	;---------------------
+0056   0033             
+0057   0033             BCD_NUM:
+0058   0033 78          	LD A,B
+0059   0034 1E 00       	LD E,0 ;REGISTRO QUE ALMACENARÁ DECENAS
+0060   0036             DIVLOOP:
+0061   0036 FE 0A       	CP 10
+0062   0038 38 05       	JR C, DONE ;AL COMPARAR CON 10 Y SI ES MENOR NO SE NECESITA HACER NADA
+0063   003A D6 0A       	SUB 10
+0064   003C 1C          	INC E ;SE INCREMENTARAN LAS DECENAS
+0065   003D 18 F7       	JR DIVLOOP
+0066   003F             
+0067   003F             DONE:
+0068   003F             	;A SERAN LAS UNIDADES Y E LAS DECENAS
+0069   003F CB 23       	SLA E
+0070   0041 CB 23       	SLA E
+0071   0043 CB 23       	SLA E
+0072   0045 CB 23       	SLA E
+0073   0047             	;SE REALIZARON LOS CUATRO DESPLAZAMIENTOS DE LOS 4 BITS DEL DIGITO
+0074   0047 B3          	OR E ;PROVOCA QUE SE COMBINEN LAS DECENAS CON LAS UNIDADES DE A
+0075   0048 47          	LD B,A
+0076   0049 76          	HALT
+0077   004A             
+0078   004A             	.END
+0079   004A             
+0080   004A             
+0081   004A             
+0082   004A             
+0083   004A             
+Number of errors = 0
